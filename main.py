@@ -1,9 +1,14 @@
-from telegram.ext import Updater, CommandHandler
+from telegram.ext import Updater, CommandHandler, MessageHandler
+from telegram.ext.filters import Filters
 import random
 import subprocess
 import logging
 
-logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s', level=logging.INFO)
+logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s', level=logging.DEBUG)
+
+photos = {
+        "metacircular": 'AgADBQADV6gxGyA9KVdv8KmmmPgtsjRW2zIABBah2Y1WNNV7JzkBAAEC',
+        }
 
 def start(bot, update):
     """Send a message when the command /start is issued."""
@@ -68,6 +73,15 @@ def mancmd(bot, update):
             reply += "Man page exists but someone fucked up when writing the manpage so... sorry :("
         update.message.reply_text(reply)
 
+def mce(bot, update):
+    update.message.reply_photo(photos["metacircular"])
+
+def shutupandleave(bot, update):
+    bot.leave_chat(update.message.chat_id)
+
+def photocmd(bot, update):
+    print(update)
+
 def main():
     updater = Updater('723571546:AAEPw61TLAhXYbVuOQgfsUScGrxFLNa2s0I')
 
@@ -82,6 +96,9 @@ def main():
     updater.dispatcher.add_handler(CommandHandler('hackernews', hackernews))
     updater.dispatcher.add_handler(CommandHandler('help', helpcmd))
     updater.dispatcher.add_handler(CommandHandler('man', mancmd))
+    updater.dispatcher.add_handler(CommandHandler('mce', mce))
+    updater.dispatcher.add_handler(CommandHandler('shutupandleave', shutupandleave))
+    updater.dispatcher.add_handler(MessageHandler(Filters.photo, photocmd))
 
     updater.start_polling()
     updater.idle()
