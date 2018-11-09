@@ -43,33 +43,30 @@ def helpcmd(bot, update):
     update.message.reply_text('https://doc.rust-lang.org/stable/book/')
 
 def mancmd(bot, update):
-    try:
-        query = update.message.text.split()[1]
-        result = subprocess.check_output(['man', '--', query]).decode('utf-8').splitlines()
-        if len(result) == 1:
-            update.message.reply_text(result[0])
-        else:
-            name = -1
-            description = -1
-            reply = ""
-            for i, l in enumerate(result):
-                if l == 'NAME':
-                    name = i
-                elif l == 'DESCRIPTION':
-                    description = i
-            if name >= 0:
-                reply += 'NAME: '
-                reply += result[name+1].strip()
-                reply += '\n'
-            if description >= 0:
-                reply += 'DESCRIPTION: '
-                reply += result[description+1].strip()
-                reply += '\n'
-            if reply == "":
-                reply += "Man page exists but someone fucked up when writing the manpage so... sorry :("
-            update.message.reply_text(reply)
-    except:
-        pass
+    query = update.message.text.split()[1]
+    result = subprocess.run(['man', '--', query], stdout=subprocess.PIPE, stderr=subprocess.STDOUT).stdout.decode('utf-8').splitlines()
+    if len(result) == 1:
+        update.message.reply_text(result[0])
+    else:
+        name = -1
+        description = -1
+        reply = ""
+        for i, l in enumerate(result):
+            if l == 'NAME':
+                name = i
+            elif l == 'DESCRIPTION':
+                description = i
+        if name >= 0:
+            reply += 'NAME: '
+            reply += result[name+1].strip()
+            reply += '\n'
+        if description >= 0:
+            reply += 'DESCRIPTION: '
+            reply += result[description+1].strip()
+            reply += '\n'
+        if reply == "":
+            reply += "Man page exists but someone fucked up when writing the manpage so... sorry :("
+        update.message.reply_text(reply)
 
 def main():
     updater = Updater('723571546:AAEPw61TLAhXYbVuOQgfsUScGrxFLNa2s0I')
