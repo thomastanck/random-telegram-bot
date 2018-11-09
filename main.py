@@ -10,10 +10,6 @@ photos = {
         "metacircular": 'AgADBQADV6gxGyA9KVdv8KmmmPgtsjRW2zIABBah2Y1WNNV7JzkBAAEC',
         }
 
-def start(bot, update):
-    """Send a message when the command /start is issued."""
-    update.message.reply_text('Meh')
-
 def randomcmd(bot, update):
     update.message.reply_text('{0:.3f}'.format(random.random()))
 
@@ -76,16 +72,27 @@ def mancmd(bot, update):
 def mce(bot, update):
     update.message.reply_photo(photos["metacircular"])
 
+def cry(bot, update):
+    update.message.reply_text('https://www.youtube.com/watch?v=wXQCPAR0EHo')
+
+def gj(bot, update):
+    update.message.reply_text('Good Job!')
+
 def shutupandleave(bot, update):
     bot.leave_chat(update.message.chat_id)
 
 def photocmd(bot, update):
     print(update)
 
-def main():
-    updater = Updater('723571546:AAEPw61TLAhXYbVuOQgfsUScGrxFLNa2s0I')
+def addcmd(bot, update):
+    if update.message.from_user.id == 414604698:
+        _, cmdname, reply = update.message.text.split(maxsplit=2)
+        updater.dispatcher.add_handler(CommandHandler(cmdname, lambda bot, update: update.message.reply_text(reply)))
+    else:
+        print(update)
 
-    updater.dispatcher.add_handler(CommandHandler('start', start))
+updater = Updater('723571546:AAEPw61TLAhXYbVuOQgfsUScGrxFLNa2s0I')
+def main():
     updater.dispatcher.add_handler(CommandHandler('random', randomcmd))
     updater.dispatcher.add_handler(CommandHandler('thenaesh', thenaesh))
     updater.dispatcher.add_handler(CommandHandler('stars', stars))
@@ -97,6 +104,9 @@ def main():
     updater.dispatcher.add_handler(CommandHandler('help', helpcmd))
     updater.dispatcher.add_handler(CommandHandler('man', mancmd))
     updater.dispatcher.add_handler(CommandHandler('mce', mce))
+    updater.dispatcher.add_handler(CommandHandler('cry', cry))
+    updater.dispatcher.add_handler(CommandHandler('gj', gj))
+    updater.dispatcher.add_handler(CommandHandler('addcmd', addcmd))
     updater.dispatcher.add_handler(CommandHandler('shutupandleave', shutupandleave))
     updater.dispatcher.add_handler(MessageHandler(Filters.photo, photocmd))
 
