@@ -1,8 +1,11 @@
 from telegram.ext import Updater, CommandHandler, MessageHandler
 from telegram.ext.filters import Filters
+import telegram
 import random
 import subprocess
 import logging
+import wikipediaapi
+import json
 
 logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s', level=logging.DEBUG)
 
@@ -10,38 +13,26 @@ photos = {
         "metacircular": 'AgADBQADV6gxGyA9KVdv8KmmmPgtsjRW2zIABBah2Y1WNNV7JzkBAAEC',
         }
 
+simple_replies_filename = 'simple_replies.json'
+simple_replies = json.load(open(simple_replies_filename, 'r'))
+def save_simple_replies():
+    json_replies = json.dumps(simple_replies, indent='\t', sort_keys=True, ensure_ascii=False)
+    with open(simple_replies_filename, 'w') as f:
+        f.write(json_replies)
+        f.write('\n')
+
+save_simple_replies()
+
+wikiwiki = wikipediaapi.Wikipedia('en')
+
 def randomcmd(bot, update):
     update.message.reply_text('{0:.3f}'.format(random.random()))
-
-def thenaesh(bot, update):
-    update.message.reply_text('Oh Thenaesh, how are you?')
-
-def stars(bot, update):
-    update.message.reply_text('A star is type of astronomical object consisting of a luminous spheroid of plasma held together by its own gravity. The nearest star to Earth is the Sun. Many other stars are visible to the naked eye from Earth during the night, appearing as a multitude of fixed luminous points in the sky due to their immense distance from Earth. Historically, the most prominent stars were grouped into constellations and asterisms, the brightest of which gained proper names. Astronomers have assembled star catalogues that identify the known stars and provide standardized stellar designations. However, most of the stars in the Universe, including all stars outside our galaxy, the Milky Way, are invisible to the naked eye from Earth. Indeed, most are invisible from Earth even through the most powerful telescopes.')
 
 def hoogle(bot, update):
     update.message.reply_text("Hoogle doesn't work on this server... :(")
     # query = update.message.text[len('/hoogle'):]
     # result = subprocess.check_output(['hoogle', '--', query]).decode('utf-8')
     # update.message.reply_text(result)
-
-def opencmd(bot, update):
-    update.message.reply_markdown('`int fd = open("/home/cs-ay1819/src/cancer/README.md", RD_ONLY);`')
-
-def closecmd(bot, update):
-    update.message.reply_markdown('`close(fd);`')
-
-def reddit(bot, update):
-    update.message.reply_text('https://news.ycombinator.com/')
-
-def hackernews(bot, update):
-    update.message.reply_text('https://www.reddit.com/')
-
-def bestmodules(bot, update):
-    update.message.reply_text('Here are the best modules: psmouse, rfkill, acpi_call, ip_tables')
-
-def helpcmd(bot, update):
-    update.message.reply_text('https://doc.rust-lang.org/stable/book/')
 
 def mancmd(bot, update):
     query = update.message.text.split()[1]
@@ -72,12 +63,6 @@ def mancmd(bot, update):
 def mce(bot, update):
     update.message.reply_photo(photos["metacircular"])
 
-def cry(bot, update):
-    update.message.reply_text('https://www.youtube.com/watch?v=wXQCPAR0EHo')
-
-def gj(bot, update):
-    update.message.reply_text('Good Job!')
-
 def shutupandleave(bot, update):
     bot.leave_chat(update.message.chat_id)
 
@@ -87,28 +72,58 @@ def photocmd(bot, update):
 def addcmd(bot, update):
     if update.message.from_user.id == 414604698:
         _, cmdname, reply = update.message.text.split(maxsplit=2)
-        updater.dispatcher.add_handler(CommandHandler(cmdname, lambda bot, update: update.message.reply_text(reply)))
+        simple_replies[cmdname] = reply
+        save_simple_replies()
     else:
         print(update)
 
-updater = Updater('723571546:AAEPw61TLAhXYbVuOQgfsUScGrxFLNa2s0I')
+def rmcmd(bot, update):
+    if update.message.from_user.id == 414604698:
+        _, cmdname, *_ = update.message.text.split(maxsplit=2)
+        del simple_replies[cmdname]
+        save_simple_replies()
+    else:
+        print(update)
+
+def evaluatescheme(bot, update):
+    _, code = update.message.text.split(maxsplit=1)
+    # code = sexpr.parse(code)
+    print(code)
+
+def wiki(bot, update):
+    _, query = update.message.text.split(maxsplit=1)
+    page = wikiwiki.page(query)
+    update.message.reply_text(f'''{page.fullurl}''')
+
+def wikipedia(bot, update):
+    _, query = update.message.text.split(maxsplit=1)
+    page = wikiwiki.page(query)
+    update.message.reply_text(f'''{page.summary}
+
+{page.fullurl}''')
+
+def simple(bot, update):
+    if update.message.entities[0].type == telegram.MessageEntity.BOT_COMMAND:
+        command = update.message.parse_entity(update.message.entities[0]).split('@', maxsplit=1)[0][1:]
+        if command in simple_replies:
+            update.message.reply_markdown(simple_replies[command])
+
 def main():
+    updater = Updater('723571546:AAEPw61TLAhXYbVuOQgfsUScGrxFLNa2s0I')
     updater.dispatcher.add_handler(CommandHandler('random', randomcmd))
-    updater.dispatcher.add_handler(CommandHandler('thenaesh', thenaesh))
-    updater.dispatcher.add_handler(CommandHandler('stars', stars))
     updater.dispatcher.add_handler(CommandHandler('hoogle', hoogle))
-    updater.dispatcher.add_handler(CommandHandler('open', opencmd))
-    updater.dispatcher.add_handler(CommandHandler('close', closecmd))
-    updater.dispatcher.add_handler(CommandHandler('reddit', reddit))
-    updater.dispatcher.add_handler(CommandHandler('hackernews', hackernews))
-    updater.dispatcher.add_handler(CommandHandler('help', helpcmd))
     updater.dispatcher.add_handler(CommandHandler('man', mancmd))
     updater.dispatcher.add_handler(CommandHandler('mce', mce))
-    updater.dispatcher.add_handler(CommandHandler('cry', cry))
-    updater.dispatcher.add_handler(CommandHandler('gj', gj))
     updater.dispatcher.add_handler(CommandHandler('addcmd', addcmd))
+    updater.dispatcher.add_handler(CommandHandler('rmcmd', rmcmd))
     updater.dispatcher.add_handler(CommandHandler('shutupandleave', shutupandleave))
+    # updater.dispatcher.add_handler(CommandHandler('eval', evaluatescheme))
+    updater.dispatcher.add_handler(CommandHandler('wiki', wiki))
+    updater.dispatcher.add_handler(CommandHandler('wikipedia', wikipedia))
+
     updater.dispatcher.add_handler(MessageHandler(Filters.photo, photocmd))
+
+    updater.dispatcher.add_handler(MessageHandler(Filters.command, simple))
 
     updater.start_polling()
     updater.idle()
