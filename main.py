@@ -102,11 +102,28 @@ def wikipedia(bot, update):
 
 {page.fullurl}''')
 
+modifiers = {
+        'random': lambda s: ''.join(x.lower() if random.random() < 0.5 else x.upper() for x in s),
+        'delete': lambda s: ''.join('' if random.random() < 0.2 else x for x in s),
+        'upper': lambda s: s.upper(),
+        'lower': lambda s: s.lower(),
+        'title': lambda s: s.title(),
+        'expand': lambda s: ' '.join(s),
+        'code': lambda s: f'```\n{s}\n```',
+        'expand': lambda s: ' '.join(s),
+        }
+
 def simple(bot, update):
-    if update.message.entities[0].type == telegram.MessageEntity.BOT_COMMAND:
-        command = update.message.parse_entity(update.message.entities[0]).split('@', maxsplit=1)[0][1:]
-        if command in simple_replies:
-            update.message.reply_markdown(simple_replies[command])
+    command, *modifier = update.message.text.split()
+    command = command.split('@', maxsplit=1)[0]
+    command = command[1:]
+    if command in simple_replies:
+        text = simple_replies[command]
+        for mod in modifier:
+            if mod in modifiers:
+                text = modifiers[mod](text)
+        print(text)
+        update.message.reply_markdown(text)
 
 def main():
     updater = Updater('723571546:AAEPw61TLAhXYbVuOQgfsUScGrxFLNa2s0I')
