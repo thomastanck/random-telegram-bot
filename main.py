@@ -104,7 +104,7 @@ def wikipedia(bot, update):
 
 modifiers = {
         'random': lambda s: ''.join(x.lower() if random.random() < 0.5 else x.upper() for x in s),
-        'delete': lambda s: ''.join('' if random.random() < 0.2 else x for x in s),
+        'delete': lambda s: ''.join(x for x in s if random.random() < 0.8),
         'upper': lambda s: s.upper(),
         'lower': lambda s: s.lower(),
         'title': lambda s: s.title(),
