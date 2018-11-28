@@ -111,6 +111,7 @@ modifiers = {
         'expand': lambda s: ' '.join(s),
         'code': lambda s: f'```\n{s}\n```',
         'expand': lambda s: ' '.join(s),
+        'smallcaps': lambda s: s.translate(str.maketrans("abcdefghijklmnopqrstuvwxyz","ᴀʙᴄᴅᴇғɢʜɪᴊᴋʟᴍɴᴏᴩǫʀꜱᴛᴜᴠᴡxʏᴢ")),
         }
 
 def simple(bot, update):
