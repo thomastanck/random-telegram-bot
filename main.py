@@ -123,7 +123,7 @@ def get_mod_info(module_code, *options):
     sems = ' ∙ '.join(f'Sem {x}' for x in semesters)
 
     examtimes = '\n'.join(
-            f'''Semester {x['Semester']}: ''' + (
+            f'''Sem {x['Semester']}: ''' + (
                 f'''{datetime.datetime.strptime(x['ExamDate'], '%Y-%m-%dT%H:%M+0800').strftime('%d %b %Y %H:%M')}'''
                 if 'ExamDate' in x
                 else 'No Exam')
