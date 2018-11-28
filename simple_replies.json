@@ -1,16 +1,20 @@
 {
 	"bestmodules": "Here are the best modules: psmouse, rfkill, acpi_call, ip_tables",
+	"chinese": "Do you need Chinese tech support?",
 	"close": "`close(fd);`",
 	"cry": "https://www.youtube.com/watch?v=wXQCPAR0EHo",
 	"gj": "Good Job!",
 	"hackernews": "https://www.reddit.com/",
 	"help": "https://doc.rust-lang.org/stable/book/",
 	"helphelp": "To use Deep Thinker: /manual\nTo use Evalbot: /help@slevalbot\nTo use Encik: /inspect\nTo use Pixel: /gender\nTo use this bot: Use your brain\nTo use Hartin Menz: Use your meme power\nTo use Plateletbot: Praise platelet for the good work that she does!",
+	"jpg": "JPG",
 	"open": "`int fd = open(\"/home/cs-ay1819/src/cancer/README.md\", RD_ONLY);`",
+	"proof": "Nontrivial but omitted.",
 	"reddit": "https://news.ycombinator.com/",
 	"stars": "A star is type of astronomical object consisting of a luminous spheroid of plasma held together by its own gravity. The nearest star to Earth is the Sun. Many other stars are visible to the naked eye from Earth during the night, appearing as a multitude of fixed luminous points in the sky due to their immense distance from Earth. Historically, the most prominent stars were grouped into constellations and asterisms, the brightest of which gained proper names. Astronomers have assembled star catalogues that identify the known stars and provide standardized stellar designations. However, most of the stars in the Universe, including all stars outside our galaxy, the Milky Way, are invisible to the naked eye from Earth. Indeed, most are invisible from Earth even through the most powerful telescopes.",
 	"thenaesh": "Oh Thenaesh, how are you?",
 	"toxic": "The massive CS telegram chat group is a toxic environment. I recommend that all incoming freshmen and current freshmen who are still stuck inside that if you wish to join a 'cohort' chat group, make sure it is a cohort level without a handful of sophomores empowering each other's epeen. Talk about fear-mongering. This is not role-modeling at all, open your eyes.",
+	"tutorial": "In one of the CS2106 tutorials, what happens almost every week is that one prodigy on the left of the classroom would start throwing random thoughts at some point of time, which might seem contributive at the start, but a group of other prodigies on the right of the classroom would start to refute against it, and the two sides would start debating with each other, which would develop into some real-life version of Livelock. The tutor simply cannot proceed with questions that follows, and sometimes even don’t have the time to finish the entire tutorial questions. One man’s A is ten other people’s B.",
 	"とっくしっく": "あの大規模なCSのTelegramグループは誠に有害な環境です。まだあのグループにいるCSの新入生のあなた型にこう一心に勧めます：CSの「同級生」のグループに参加することを望むならば、グループは真の同級生のを、お互いに自慢や072する二年生がいないのを、是非確認しなさい。恐怖心を煽っているだけで、全く率先垂範ではありません。目を醒ましなさい。",
 	"トックシック": "あの大規模なCSのTelegramグループは誠に有害な環境です。まだあのグループにいるCSの新入生のあなた型にこう一心に勧めます：CSの「同級生」のグループに参加することを望むならば、グループは真の同級生のを、お互いに自慢や072する二年生がいないのを、是非確認しなさい。恐怖心を煽っているだけで、全く率先垂範ではありません。目を醒ましなさい。"
 }
