@@ -110,6 +110,20 @@ def rmcmd(bot, update):
     else:
         print(update)
 
+def get_pysweeper_status(bot, update):
+    import getpass, urllib
+    r = requests.get('http://status.pysweeper.com:8222/status?'+urllib.parse.urlencode([('u', getpass.getuser())]))
+    status = r.json()
+    update.message.reply_text(status['CurrentStatus'])
+    return status
+
+try:
+    bot_mock = {}
+    update_mock = {}
+    pysweeper_status = get_pysweeper_status(bot_mock, update_mock)
+except:
+    pysweeper_status = False
+
 def evaluatescheme(bot, update):
     _, code = update.message.text.split(maxsplit=1)
     # code = sexpr.parse(code)
@@ -273,6 +287,7 @@ def main():
     updater.dispatcher.add_handler(CommandHandler('wikipedia', wikipedia))
     updater.dispatcher.add_handler(CommandHandler('mod', nusmods))
     updater.dispatcher.add_handler(CommandHandler('xkcd', xkcd))
+    updater.dispatcher.add_handler(CommandHandler('get_pysweeper_status', get_pysweeper_status))
 
     updater.dispatcher.add_handler(MessageHandler(Filters.photo, photocmd))
 
