@@ -139,7 +139,7 @@ def nusmods_search(bot, update):
     query = query.strip()
     matches = []
     for modcode, modname in module_list.items():
-        if is_subseq(query.lower(), modname.lower()):
+        if is_subseq(query.lower(), modcode.lower() + ' ' + modname.lower()):
             matches.append((modcode, modname))
 
     if len(matches) == 0:
