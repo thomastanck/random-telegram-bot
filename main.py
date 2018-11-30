@@ -256,7 +256,7 @@ def simple(bot, update):
         update.message.reply_markdown(text)
 
 def main():
-    updater = Updater('723571546:AAEPw61TLAhXYbVuOQgfsUScGrxFLNa2s0I')
+    updater = Updater('781479203:AAE7TvXGvd16Ro2XgCtwi3i3vkAoqmPkx3Y')
     updater.dispatcher.add_handler(CommandHandler('random', randomcmd))
     updater.dispatcher.add_handler(CommandHandler('hoogle', hoogle))
     updater.dispatcher.add_handler(CommandHandler('man', mancmd))
