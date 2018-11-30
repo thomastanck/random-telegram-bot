@@ -131,6 +131,10 @@ def nusmods(bot, update):
     _, query, *rest = update.message.text.split()
     if query.upper() in module_list:
         update.message.reply_markdown(get_mod_info(query, *rest))
+    else:
+        nusmods_search(bot, update)
+
+def nusmods_search(bot, update):
     _, query = update.message.text.split(maxsplit=1)
     query = query.strip()
     matches = []
