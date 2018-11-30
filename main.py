@@ -182,6 +182,10 @@ def get_mod_info(module_code, *options):
 {content}
             '''.strip()
 
+def xkcd(bot, update):
+    _, query = update.message.text.split(maxsplit=1)
+    update.message.reply_text(f'https://www.xkcd.com/{query}/')
+
 modifiers = {
         'random': lambda s: ''.join(x.lower() if random.random() < 0.5 else x.upper() for x in s),
         'delete': lambda s: ''.join(x for x in s if random.random() < 0.8),
@@ -220,6 +224,7 @@ def main():
     updater.dispatcher.add_handler(CommandHandler('wiki', wiki))
     updater.dispatcher.add_handler(CommandHandler('wikipedia', wikipedia))
     updater.dispatcher.add_handler(CommandHandler('mod', nusmods))
+    updater.dispatcher.add_handler(CommandHandler('xkcd', xkcd))
 
     updater.dispatcher.add_handler(MessageHandler(Filters.photo, photocmd))
 
