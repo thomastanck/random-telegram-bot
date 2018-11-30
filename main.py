@@ -25,6 +25,10 @@ def save_simple_replies():
 
 save_simple_replies()
 
+admin_ids = [
+        414604698
+        ]
+
 wikiwiki = wikipediaapi.Wikipedia('en')
 
 def randomcmd(bot, update):
@@ -72,7 +76,7 @@ def photocmd(bot, update):
     print(update)
 
 def addcmd(bot, update):
-    if update.message.from_user.id == 414604698:
+    if update.message.from_user.id in admin_ids:
         _, cmdname, reply = update.message.text.split(maxsplit=2)
         simple_replies[cmdname] = reply
         save_simple_replies()
@@ -80,7 +84,7 @@ def addcmd(bot, update):
         print(update)
 
 def rmcmd(bot, update):
-    if update.message.from_user.id == 414604698:
+    if update.message.from_user.id in admin_ids:
         _, cmdname, *_ = update.message.text.split(maxsplit=2)
         del simple_replies[cmdname]
         save_simple_replies()
