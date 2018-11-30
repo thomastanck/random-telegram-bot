@@ -29,7 +29,26 @@ admin_ids = [
         414604698
         ]
 
+module_list = {}
+module_list.update(json.load(open('sem1moduleList.json', 'r')))
+module_list.update(json.load(open('sem2moduleList.json', 'r')))
+
 wikiwiki = wikipediaapi.Wikipedia('en')
+
+def is_substr(x, y):
+    return y.find(x) != -1
+
+def is_subseq(x, y):
+    x = x.split()
+    y = y.split()
+    it = iter(y)
+    for wordx in x:
+        for wordy in it:
+            if is_substr(wordx, wordy):
+                break
+        else:
+            return False
+    return True
 
 def randomcmd(bot, update):
     update.message.reply_text('{0:.3f}'.format(random.random()))
@@ -110,7 +129,28 @@ def wikipedia(bot, update):
 
 def nusmods(bot, update):
     _, query, *rest = update.message.text.split()
-    update.message.reply_markdown(get_mod_info(query, *rest))
+    if query.upper() in module_list:
+        update.message.reply_markdown(get_mod_info(query, *rest))
+    _, query = update.message.text.split(maxsplit=1)
+    query = query.strip()
+    matches = []
+    for modcode, modname in module_list.items():
+        if is_subseq(query.lower(), modname.lower()):
+            matches.append((modcode, modname))
+
+    if len(matches) == 0:
+        update.message.reply_markdown('No matches found')
+    elif len(matches) == 1:
+        update.message.reply_markdown(get_mod_info(matches[0][0]))
+    elif len(matches) > 10:
+        update.message.reply_markdown('\n'.join([
+            '''Top 10 matches found:''',
+            *(f'''{x[0]}: {x[1]}''' for x in matches[:10]),
+            '...']))
+    else:
+        update.message.reply_markdown('\n'.join([
+            '''Matches found:''',
+            *(f'''{x[0]}: {x[1]}''' for x in matches)]))
 
 def get_mod_info(module_code, *options):
     r = requests.get(f'http://api.nusmods.com/2018-2019/modules/{module_code.upper()}/index.json')
