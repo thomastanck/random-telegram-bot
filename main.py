@@ -214,6 +214,11 @@ def get_mod_info(module_code, *options):
 {modinfo.get('Prerequisite', 'Nil').strip()}
             '''.rstrip(),
 
+        'preclude': f'''
+*Preclusions*
+{modinfo.get('Preclusion', 'Nil').strip()}
+            '''.rstrip(),
+
         'exam': f'''
 *Exam*
 {examtimes}
@@ -227,6 +232,7 @@ def get_mod_info(module_code, *options):
             moddesc[:moddesc.find('? ')] + '?'),
         'desc': moddesc,
         'prereq': modinfo.get('Prerequisite', 'Nil').strip(),
+        'preclude': modinfo.get('Preclusion', 'Nil').strip(),
         'exam': examtimes,
     }
 
