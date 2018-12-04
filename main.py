@@ -143,23 +143,21 @@ def wikipedia(bot, update):
 
 def nusmods(bot, update):
     _, query, *rest = update.message.text.split()
-    if query.upper() in module_list:
-        update.message.reply_markdown(get_mod_info(query, *rest))
-    else:
-        nusmods_search(bot, update)
 
-def nusmods_search(bot, update):
-    _, query = update.message.text.split(maxsplit=1)
-    query = query.strip()
     matches = []
-    for modcode, modname in module_list.items():
-        if is_subseq(query.lower(), modcode.lower() + ' ' + modname.lower()):
-            matches.append((modcode, modname))
+    for search in (
+            nusmods_search_modulecode,
+            nusmods_search_text,
+            nusmods_search_regex,
+            ):
+        matches = search(bot, update)
+        if matches:
+            break
 
     if len(matches) == 0:
         update.message.reply_markdown('No matches found')
     elif len(matches) == 1:
-        update.message.reply_markdown(get_mod_info(matches[0][0]))
+        update.message.reply_markdown(get_mod_info(matches[0][0], *matches[0][2]))
     elif len(matches) > 10:
         update.message.reply_markdown('\n'.join([
             '''Top 10 matches found:''',
@@ -169,6 +167,31 @@ def nusmods_search(bot, update):
         update.message.reply_markdown('\n'.join([
             '''Matches found:''',
             *(f'''{x[0]}: {x[1]}''' for x in matches)]))
+
+
+def nusmods_search_modulecode(bot, update):
+    _, query, *rest = update.message.text.split()
+    if query.upper() in module_list:
+        return [(query.upper(), module_list[query.upper()], rest)]
+    else:
+        return []
+
+def nusmods_search_text(bot, update):
+    _, query = update.message.text.split(maxsplit=1)
+    query = query.strip()
+    matches = []
+    for modcode, modname in module_list.items():
+        if is_subseq(query.lower(), f'{modcode.lower()}: {modname.lower()}'):
+            matches.append((modcode, modname, tuple()))
+    return matches
+
+def nusmods_search_regex(bot, update):
+    _, query = update.message.text.split(maxsplit=1)
+    modules = '\n'.join(f'{modcode}: {modname}' for modcode, modname in module_list.items())
+    matches = subprocess.check_output(['grep', '-E', '-i', query], input=modules, encoding='utf-8').splitlines()
+    matches = [x.split(maxsplit=1) for x in matches]
+    matches = [(x[0][:-1], x[1], tuple()) for x in matches]
+    return matches
 
 def get_mod_info(module_code, *options):
     r = requests.get(f'http://api.nusmods.com/2018-2019/modules/{module_code.upper()}/index.json')
