@@ -141,6 +141,10 @@ def wikipedia(bot, update):
 
 {page.fullurl}''')
 
+
+class NUSModsSearchTimeout(subprocess.TimeoutExpired):
+    pass
+
 def nusmods(bot, update):
     _, query, *rest = update.message.text.split()
 
@@ -150,7 +154,11 @@ def nusmods(bot, update):
             nusmods_search_text,
             nusmods_search_regex,
             ):
-        matches = search(bot, update)
+        try:
+            matches = search(bot, update)
+        except NUSModsSearchTimeout as e:
+            update.message.reply_markdown('Search timed out')
+            raise e
         if matches:
             break
 
@@ -188,7 +196,11 @@ def nusmods_search_text(bot, update):
 def nusmods_search_regex(bot, update):
     _, query = update.message.text.split(maxsplit=1)
     modules = '\n'.join(f'{modcode}: {modname}' for modcode, modname in module_list.items())
-    matches = subprocess.check_output(['grep', '-E', '-i', query], input=modules, encoding='utf-8', timeout=8).splitlines()
+    try:
+        matches = subprocess.check_output(['grep', '-E', '-i', query], input=modules, encoding='utf-8', timeout=8).splitlines()
+    except subprocess.TimeoutExpired as e:
+        raise NUSModsSearchTimeout(e.cmd, e.timeout, e.output, e.stderr)
+
     matches = [x.split(maxsplit=1) for x in matches]
     matches = [(x[0][:-1], x[1], tuple()) for x in matches]
     return matches
