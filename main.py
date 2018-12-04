@@ -188,7 +188,7 @@ def nusmods_search_text(bot, update):
 def nusmods_search_regex(bot, update):
     _, query = update.message.text.split(maxsplit=1)
     modules = '\n'.join(f'{modcode}: {modname}' for modcode, modname in module_list.items())
-    matches = subprocess.check_output(['grep', '-E', '-i', query], input=modules, encoding='utf-8').splitlines()
+    matches = subprocess.check_output(['grep', '-E', '-i', query], input=modules, encoding='utf-8', timeout=8).splitlines()
     matches = [x.split(maxsplit=1) for x in matches]
     matches = [(x[0][:-1], x[1], tuple()) for x in matches]
     return matches
