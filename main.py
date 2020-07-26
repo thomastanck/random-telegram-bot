@@ -113,7 +113,7 @@ def bigthonk(bot, update):
 def havinghereortakeaway(bot, update):
     update.message.reply_photo(photos["havinghereortakeaway"])
 
-def shutupandleave(bot, update):
+def leavepls(bot, update):
     bot.leave_chat(update.message.chat_id)
 
 def photocmd(bot, update):
@@ -416,7 +416,7 @@ def main():
     updater.dispatcher.add_handler(CommandHandler('havinghereortakeaway', havinghereortakeaway))
     updater.dispatcher.add_handler(CommandHandler('addcmd', addcmd))
     updater.dispatcher.add_handler(CommandHandler('rmcmd', rmcmd))
-    updater.dispatcher.add_handler(CommandHandler('shutupandleave', shutupandleave))
+    updater.dispatcher.add_handler(CommandHandler('leavepls', leavepls))
     # updater.dispatcher.add_handler(CommandHandler('eval', evaluatescheme))
     updater.dispatcher.add_handler(CommandHandler('wiki', wiki))
     updater.dispatcher.add_handler(CommandHandler('wikipedia', wikipedia))
