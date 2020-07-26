@@ -8,11 +8,18 @@ import wikipediaapi
 import json
 import requests
 import datetime
+import functools
+import collections
 
 logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s', level=logging.DEBUG)
 
 photos = {
         "metacircular": 'AgADBQADV6gxGyA9KVdv8KmmmPgtsjRW2zIABBah2Y1WNNV7JzkBAAEC',
+        "pseudocode": 'AgADBQADI6kxGzYomFdFvXL3F25hpb-g1jIABIOzLQpJhZIG9j0EAAEC',
+        "continuous": 'AgADBQADuakxGz6lyVRnJMkHnTDyqnB43zIABNPkXsBHk5buDd4AAgI',
+        "bigthonk": 'CgADBAADlpkAAjccZAddlbP2fzCuvgI',
+        "havinghereortakeaway": 'AgADBQAD3agxG4j4IVci5NZiTBhkSjRt3jIABMBZR8GUlLVlczUFAAEC',
+        "privateryan": 'AgACAgUAAxkBAAEBypFfFauDkMFtGujGreK8_NQT9sX6DAAChKoxG6j6sFR3E5X1XhYb0add5Wt0AAMBAAMCAANtAAOb9gACGgQ',
         }
 
 simple_replies_filename = 'simple_replies.json'
@@ -26,12 +33,18 @@ def save_simple_replies():
 save_simple_replies()
 
 admin_ids = [
-        414604698
+        414604698, # me
+        294957226,
+        155327242,
         ]
 
 module_list = {}
-module_list.update(json.load(open('sem1moduleList.json', 'r')))
-module_list.update(json.load(open('sem2moduleList.json', 'r')))
+with open('moduleList.json', 'r') as f:
+    modules = json.load(f)
+    for module in modules:
+        module_list[module['moduleCode']] = module['title']
+# module_list.update(json.load(open('sem1moduleList.json', 'r')))
+# module_list.update(json.load(open('sem2moduleList.json', 'r')))
 
 wikiwiki = wikipediaapi.Wikipedia('en')
 
@@ -88,6 +101,18 @@ def mancmd(bot, update):
 def mce(bot, update):
     update.message.reply_photo(photos["metacircular"])
 
+def pseudocode(bot, update):
+    update.message.reply_photo(photos["pseudocode"])
+
+def continuous(bot, update):
+    update.message.reply_photo(photos["continuous"])
+
+def bigthonk(bot, update):
+    update.message.reply_animation(photos["bigthonk"])
+
+def havinghereortakeaway(bot, update):
+    update.message.reply_photo(photos["havinghereortakeaway"])
+
 def shutupandleave(bot, update):
     bot.leave_chat(update.message.chat_id)
 
@@ -141,6 +166,24 @@ def wikipedia(bot, update):
 
 {page.fullurl}''')
 
+last_ping = collections.defaultdict(lambda: ('pong', 0, None))
+def ping(bot, update):
+    chatid = update.message.chat.id
+    if last_ping[chatid][0] == 'pong' and last_ping[chatid][1] != update.message.from_user.id:
+        if not last_ping[chatid][2]:
+            message = bot.send_message(chatid, 'Ping!')
+        else:
+            message = bot.send_message(chatid, 'Ping!', reply_to_message_id=last_ping[chatid][2])
+        last_ping[chatid] = ('ping', update.message.from_user.id, message.message_id)
+
+def pong(bot, update):
+    chatid = update.message.chat.id
+    if last_ping[chatid][0] == 'ping' and last_ping[chatid][1] != update.message.from_user.id:
+        if not last_ping[chatid][2]:
+            message = bot.send_message(chatid, 'Pong!')
+        else:
+            message = bot.send_message(chatid, 'Pong!', reply_to_message_id=last_ping[chatid][2])
+        last_ping[chatid] = ('pong', update.message.from_user.id, message.message_id)
 
 class NUSModsSearchTimeout(subprocess.TimeoutExpired):
     pass
@@ -206,25 +249,25 @@ def nusmods_search_regex(bot, update):
     return matches
 
 def get_mod_info(module_code, *options):
-    r = requests.get(f'http://api.nusmods.com/2018-2019/modules/{module_code.upper()}/index.json')
+    r = requests.get(f'http://api.nusmods.com/v2/2020-2021/modules/{module_code.upper()}.json')
     modinfo = r.json()
 
     newline = '\n'
 
-    moddesc = modinfo.get('ModuleDescription', '').strip()
-    semesters = [x.get('Semester', 0) for x in modinfo.get('History', [])]
-    hasexam = any('ExamDate' in x for x in modinfo.get('History', []))
+    moddesc = modinfo.get('description', '').strip()
+    semesters = [o.get('semester', 0) for o in modinfo.get('semesterData', [])]
+    hasexam = any('examDate' in x for x in modinfo.get('semesterData', []))
 
-    title = f'''*{modinfo.get('ModuleCode', module_code.upper()).strip()} {modinfo.get('ModuleTitle', '').strip()}*'''
-    mc = f'({modinfo["ModuleCredit"]} MC)''' if 'ModuleCredit' in modinfo else ''
+    title = f'''*{modinfo.get('moduleCode', module_code.upper()).strip()} {modinfo.get('title', '').strip()}*'''
+    mc = f'({modinfo["moduleCredit"]} MC)''' if 'moduleCredit' in modinfo else ''
     sems = ' ∙ '.join(f'Sem {x}' for x in semesters)
 
     examtimes = '\n'.join(
-            f'''Sem {x['Semester']}: ''' + (
-                f'''{datetime.datetime.strptime(x['ExamDate'], '%Y-%m-%dT%H:%M+0800').strftime('%d %b %Y %H:%M')}'''
-                if 'ExamDate' in x
+            f'''Sem {x['semester']}: ''' + (
+                f'''{datetime.datetime.strptime(x['examDate'], '%Y-%m-%dT%H:%M:%S.%fZ').strftime('%d %b %Y %H:%M')}'''
+                if 'examDate' in x
                 else 'No Exam')
-            for x in modinfo.get('History', []))
+            for x in modinfo.get('semesterData', []))
 
     header = f'''{title} {mc}'''.strip()
 
@@ -246,12 +289,12 @@ def get_mod_info(module_code, *options):
 
         'prereq': f'''
 *Prerequisites*
-{modinfo.get('Prerequisite', 'Nil').strip()}
+{modinfo.get('prerequisite', 'Nil').strip()}
             '''.rstrip(),
 
         'preclude': f'''
 *Preclusions*
-{modinfo.get('Preclusion', 'Nil').strip()}
+{modinfo.get('preclusion', 'Nil').strip()}
             '''.rstrip(),
 
         'exam': f'''
@@ -266,8 +309,8 @@ def get_mod_info(module_code, *options):
             moddesc[:moddesc.find('! ')] + '!',
             moddesc[:moddesc.find('? ')] + '?'),
         'desc': moddesc,
-        'prereq': modinfo.get('Prerequisite', 'Nil').strip(),
-        'preclude': modinfo.get('Preclusion', 'Nil').strip(),
+        'prereq': modinfo.get('prerequisite', 'Nil').strip(),
+        'preclude': modinfo.get('preclusion', 'Nil').strip(),
         'exam': examtimes,
     }
 
@@ -286,11 +329,11 @@ def get_mod_info(module_code, *options):
             '''.strip()
 
 def xkcd(bot, update):
-    _, query = update.message.text.split(maxsplit=1)
-    update.message.reply_text(f'https://www.xkcd.com/{query}/')
+    update.message.reply_text(f'https://www.xkcd.com/{int(update.message.text.split(maxsplit=1)[1], 10)}/\n{requests.get(f"https://xkcd.com/{int(update.message.text.split(maxsplit=1)[1], 10)}/info.0.json").json()["alt"]}')
 
 modifiers = {
         'random': lambda s: ''.join(x.lower() if random.random() < 0.5 else x.upper() for x in s),
+        'swap': lambda s: functools.reduce(lambda cs, c: cs + c if random.random() > 0.1 else cs[:-1] + c + cs[-1], s),
         'delete': lambda s: ''.join(x for x in s if random.random() < 0.8),
         'upper': lambda s: s.upper(),
         'lower': lambda s: s.lower(),
@@ -314,12 +357,63 @@ def simple(bot, update):
         print(text)
         update.message.reply_markdown(text)
 
+policepolice_status = collections.defaultdict(lambda: False)
+def policepolice(bot, update):
+    if update.message.from_user.id in admin_ids:
+        chatid = update.message.chat.id
+        policepolice_status[chatid] = not policepolice_status[chatid]
+        update.message.reply_markdown(f"PolicePolice is now **{'ON' if policepolice_status[chatid] else 'OFF'}**")
+
+def policekicker(bot, update):
+    chatid = update.message.chat.id
+    if policepolice_status[chatid]:
+        for member in update.message.new_chat_members:
+            username = member.username.lower()
+            name = member.first_name.lower()
+            userid = member.id
+            if 'police' in username or police in name:
+                bot.kick_chat_member(chatid, userid)
+                update.message.reply_markdown('NO MORE POLICE GOD DAMMIT')
+
+def f(bot, update):
+    _, *args = update.message.text.split()
+    if args:
+        length, *modifier = args
+    else:
+        length = ['1']
+        modifier = []
+    if length.strip() == 'ryan':
+        update.message.reply_photo(photos["privateryan"])
+        return
+    text = 'o'*(int(length)-1) + 'f'
+    for mod in modifier:
+        if mod in modifiers:
+            text = modifiers[mod](text)
+    update.message.reply_markdown(text)
+
+def g(bot, update):
+    _, *args = update.message.text.split()
+    if args:
+        length, *modifier = args
+    else:
+        length = ['1']
+        modifier = []
+    text = 'g'*int(length)
+    for mod in modifier:
+        if mod in modifiers:
+            text = modifiers[mod](text)
+    update.message.reply_markdown(text)
+
 def main():
     updater = Updater('781479203:AAE7TvXGvd16Ro2XgCtwi3i3vkAoqmPkx3Y')
     updater.dispatcher.add_handler(CommandHandler('random', randomcmd))
     updater.dispatcher.add_handler(CommandHandler('hoogle', hoogle))
     updater.dispatcher.add_handler(CommandHandler('man', mancmd))
     updater.dispatcher.add_handler(CommandHandler('mce', mce))
+    updater.dispatcher.add_handler(CommandHandler('pseudocode', pseudocode))
+    updater.dispatcher.add_handler(CommandHandler('continuous', continuous))
+    updater.dispatcher.add_handler(CommandHandler('bigthonk', bigthonk))
+    updater.dispatcher.add_handler(CommandHandler('havinghereortakeaway', havinghereortakeaway))
     updater.dispatcher.add_handler(CommandHandler('addcmd', addcmd))
     updater.dispatcher.add_handler(CommandHandler('rmcmd', rmcmd))
     updater.dispatcher.add_handler(CommandHandler('shutupandleave', shutupandleave))
@@ -328,11 +422,18 @@ def main():
     updater.dispatcher.add_handler(CommandHandler('wikipedia', wikipedia))
     updater.dispatcher.add_handler(CommandHandler('mod', nusmods))
     updater.dispatcher.add_handler(CommandHandler('xkcd', xkcd))
+    updater.dispatcher.add_handler(CommandHandler('policepolice', policepolice))
     updater.dispatcher.add_handler(CommandHandler('get_pysweeper_status', get_pysweeper_status))
+    updater.dispatcher.add_handler(CommandHandler('ping', ping))
+    updater.dispatcher.add_handler(CommandHandler('pong', pong))
+    updater.dispatcher.add_handler(CommandHandler('f', f))
+    updater.dispatcher.add_handler(CommandHandler('g', g))
 
     updater.dispatcher.add_handler(MessageHandler(Filters.photo, photocmd))
 
     updater.dispatcher.add_handler(MessageHandler(Filters.command, simple))
+
+    updater.dispatcher.add_handler(MessageHandler(Filters.status_update.new_chat_members, policekicker))
 
     updater.start_polling()
     updater.idle()
