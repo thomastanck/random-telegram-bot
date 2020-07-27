@@ -259,6 +259,7 @@ def get_mod_info(module_code, *options):
     hasexam = any('examDate' in x for x in modinfo.get('semesterData', []))
 
     title = f'''*{modinfo.get('moduleCode', module_code.upper()).strip()} {modinfo.get('title', '').strip()}*'''
+    title = '*CS5234 Algorithms at Scala*' if title == '*CS5234 Algorithms at Scale*' else title
     mc = f'({modinfo["moduleCredit"]} MC)''' if 'moduleCredit' in modinfo else ''
     sems = ' ∙ '.join(f'Sem {x}' for x in semesters)
 
