@@ -1,4 +1,4 @@
-from telegram.ext import Updater, CommandHandler, MessageHandler
+from telegram.ext import Updater, CommandHandler, MessageHandler, RegexHandler
 from telegram.ext.filters import Filters
 import telegram
 import random
@@ -405,6 +405,9 @@ def g(bot, update):
             text = modifiers[mod](text)
     update.message.reply_markdown(text)
 
+def s(bot, update):
+    update.message.reply_markdown('/s')
+
 def main():
     updater = Updater('781479203:AAE7TvXGvd16Ro2XgCtwi3i3vkAoqmPkx3Y')
     updater.dispatcher.add_handler(CommandHandler('random', randomcmd))
@@ -429,6 +432,7 @@ def main():
     updater.dispatcher.add_handler(CommandHandler('pong', pong))
     updater.dispatcher.add_handler(CommandHandler('f', f))
     updater.dispatcher.add_handler(CommandHandler('g', g))
+    updater.dispatcher.add_handler(RegexHandler('.*/s$', s))
 
     updater.dispatcher.add_handler(MessageHandler(Filters.photo, photocmd))
 
