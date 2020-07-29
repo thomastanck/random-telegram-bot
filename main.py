@@ -397,7 +397,7 @@ def g(bot, update):
     if args:
         length, *modifier = args
     else:
-        length = ['1']
+        length = '2'
         modifier = []
     text = 'g'*int(length)
     for mod in modifier:
