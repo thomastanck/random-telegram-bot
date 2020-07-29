@@ -380,12 +380,12 @@ def f(bot, update):
     _, *args = update.message.text.split()
     if args:
         length, *modifier = args
+        if length.strip() == 'ryan':
+            update.message.reply_photo(photos["privateryan"])
+            return
     else:
-        length = ['1']
+        length = '1'
         modifier = []
-    if length.strip() == 'ryan':
-        update.message.reply_photo(photos["privateryan"])
-        return
     text = 'o'*(int(length)-1) + 'f'
     for mod in modifier:
         if mod in modifiers:
