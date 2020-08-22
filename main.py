@@ -10,6 +10,9 @@ import requests
 import datetime
 import functools
 import collections
+import re
+import arxiv
+from summa.summarizer import summarize
 
 logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s', level=logging.DEBUG)
 
@@ -408,6 +411,18 @@ def g(bot, update):
 def s(bot, update):
     update.message.reply_markdown('/s')
 
+arxivre = re.compile(r'https?://arxiv\.org/abs/(?P<arxivid>\S{4,20})')
+def arxivlookup(bot, update):
+    arxivids = [match.group('arxivid') for match in arxivre.finditer(update.message.text)]
+    result = ""
+    for q in arxiv.query(id_list=arxivids):
+        arxivid = arxivre.match(q.id).group('arxivid')
+        title = q.title
+        summary = q.summary.replace('\n', ' ')
+        summary = summarize(summary, ratio=0.5)
+        result += f'*{arxivid}: {title}*\n{summary}\n\n'
+    update.message.reply_markdown(result)
+
 def main():
     updater = Updater('781479203:AAE7TvXGvd16Ro2XgCtwi3i3vkAoqmPkx3Y')
     updater.dispatcher.add_handler(CommandHandler('random', randomcmd))
@@ -433,6 +448,7 @@ def main():
     updater.dispatcher.add_handler(CommandHandler('f', f))
     updater.dispatcher.add_handler(CommandHandler('g', g))
     updater.dispatcher.add_handler(RegexHandler('.*/s$', s))
+    updater.dispatcher.add_handler(RegexHandler('https?://arxiv\\.org/abs/\S{4,20}', arxivlookup))
 
     updater.dispatcher.add_handler(MessageHandler(Filters.photo, photocmd))
 
