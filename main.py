@@ -447,8 +447,9 @@ def main():
     updater.dispatcher.add_handler(CommandHandler('pong', pong))
     updater.dispatcher.add_handler(CommandHandler('f', f))
     updater.dispatcher.add_handler(CommandHandler('g', g))
-    updater.dispatcher.add_handler(RegexHandler('.*/s$', s))
-    updater.dispatcher.add_handler(RegexHandler('https?://arxiv\\.org/abs/\S{4,20}', arxivlookup))
+    updater.dispatcher.add_handler(CommandHandler('s', s))
+    updater.dispatcher.add_handler(RegexHandler(r'.* /s$', s))
+    updater.dispatcher.add_handler(RegexHandler(r'https?://arxiv\.org/abs/\S{4,20}', arxivlookup))
 
     updater.dispatcher.add_handler(MessageHandler(Filters.photo, photocmd))
 
