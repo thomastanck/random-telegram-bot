@@ -13,6 +13,7 @@ import collections
 import re
 import arxiv
 from summa.summarizer import summarize
+import datetime
 
 logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s', level=logging.DEBUG)
 
@@ -422,6 +423,19 @@ def arxivlookup(bot, update):
         summary = summarize(summary, ratio=0.5)
         result += f'*{arxivid}: {title}*\n{summary}\n\n'
     update.message.reply_markdown(result)
+
+
+date_of_last_offence = datetime.date(2020, 12, 1)
+def resetcounter(bot, update):
+    current_date = datetime.date.today()
+    delta = current_date - date_of_last_offence
+    date_of_last_offence = current_date
+    update.message.reply_markdown("Counter reset. " + str(delta.days) + " since last offence")
+
+def getdays(bot, update):
+    current_date = datetime.date.today()
+    delta = current_date - date_of_last_offence
+    update.message.reply_markdown(str(delta.days) + " since last offence")
 
 def main():
     updater = Updater('781479203:AAE7TvXGvd16Ro2XgCtwi3i3vkAoqmPkx3Y')
