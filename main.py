@@ -14,6 +14,7 @@ import re
 import arxiv
 from summa.summarizer import summarize
 import datetime
+import pickle
 
 logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s', level=logging.DEBUG)
 
@@ -425,11 +426,12 @@ def arxivlookup(bot, update):
     update.message.reply_markdown(result)
 
 
-date_of_last_offence = datetime.date(2020, 12, 1)
+date_of_last_offence = pickle.load(open('./date.pik', 'rb'))
 def resetcounter(bot, update):
     current_date = datetime.date.today()
     delta = current_date - date_of_last_offence
     date_of_last_offence = current_date
+    pickle.dump(date_of_last_offence, open('./date.pik', 'wb'))
     update.message.reply_markdown("Counter reset. " + str(delta.days) + " since last offence")
 
 def getdays(bot, update):
@@ -463,6 +465,8 @@ def main():
     updater.dispatcher.add_handler(CommandHandler('g', g))
     updater.dispatcher.add_handler(CommandHandler('s', s))
     updater.dispatcher.add_handler(RegexHandler(r'.* /s$', s))
+    updater.dispatcher.add_handler(CommandHandler('getdays', getdays))
+    updater.dispatcher.add_handler(CommandHandler('resetcounter', resetcounter))
     updater.dispatcher.add_handler(RegexHandler(r'https?://arxiv\.org/abs/\S{4,20}', arxivlookup))
 
     updater.dispatcher.add_handler(MessageHandler(Filters.photo, photocmd))
