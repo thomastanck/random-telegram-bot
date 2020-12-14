@@ -426,7 +426,7 @@ def arxivlookup(bot, update):
     update.message.reply_markdown(result)
 
 with open('./date.pik', 'rb') as f:
-    date_of_last_offence = pickle.load()
+    date_of_last_offence = pickle.load(f)
 
 def resetcounter(bot, update):
     global date_of_last_offence
@@ -438,7 +438,6 @@ def resetcounter(bot, update):
     update.message.reply_markdown("Counter reset. " + str(delta.days) + " since last offence")
 
 def getdays(bot, update):
-    global date_of_last_offence
     current_date = datetime.date.today()
     delta = current_date - date_of_last_offence
     update.message.reply_markdown(str(delta.days) + " since last offence")
