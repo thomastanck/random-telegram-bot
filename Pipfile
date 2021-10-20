@@ -11,14 +11,15 @@ name = "pypi"
 # future = "*"
 # idna = "*"
 # pycparser = "*"
-python-telegram-bot = "*"
+# python-telegram-bot = "*"
 six = "*"
 wikipedia-api = "*"
 requests = "*"
 arxiv = "*"
 summa = "*"
+python-telegram-bot = "~=12.8"
 
 [dev-packages]
 
 [requires]
-python_version = "3.8"
+python_version = "3.9"
