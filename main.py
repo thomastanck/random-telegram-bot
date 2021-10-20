@@ -485,7 +485,7 @@ def mmtf(bot, update):
 
 What are we opening up you ask? That is also very clearly laid out. We have done well, but there is more we need to do as we transition into a covid resilient nation. There are still many unknowns. We are studying what other countries are doing, and we will learn from their successes and mistakes, and also learn from our own successes and mistakes, and we will implement a plan to help us transition into a covid resilient nation that takes into account our unique situation. We need to be vigilant. We only got to where we are because of how hard we have worked, so we cannot squander what we have been given. We need to be #sgunited in order to reach our goal of being a covid resilient nation. This is an unprecedented situation, and the next few weeks will be quite critical. The MMTF is keeping a close watch on the situation, and we will not hesitate to act when there is a need to. We know it has been a frustrating time for everyone, but we ask for your patience as we do all we can to make sure that Singapore transitions into a covid resilient nation.
 
-{':clown:' * mmtf_clowns.num_clowns}''')
+{'🤡' * mmtf_clowns.num_clowns}''')
 
 def main():
     updater = Updater('781479203:AAE7TvXGvd16Ro2XgCtwi3i3vkAoqmPkx3Y')
