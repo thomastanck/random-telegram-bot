@@ -47,8 +47,6 @@ def init_module_list():
         modules = json.load(f)
         for module in modules:
             module_list[module['moduleCode']] = module['title']
-    # module_list.update(json.load(open('sem1moduleList.json', 'r')))
-    # module_list.update(json.load(open('sem2moduleList.json', 'r')))
 init_module_list()
 
 wikiwiki = wikipediaapi.Wikipedia('en')
@@ -254,7 +252,7 @@ def nusmods_search_regex(bot, update):
     return matches
 
 def get_mod_info(module_code, *options):
-    r = requests.get(f'http://api.nusmods.com/v2/2020-2021/modules/{module_code.upper()}.json')
+    r = requests.get(f'http://api.nusmods.com/v2/2021-2022/modules/{module_code.upper()}.json')
     modinfo = r.json()
 
     newline = '\n'
