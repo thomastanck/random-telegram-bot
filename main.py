@@ -42,12 +42,14 @@ admin_ids = [
         ]
 
 module_list = {}
-with open('moduleList.json', 'r') as f:
-    modules = json.load(f)
-    for module in modules:
-        module_list[module['moduleCode']] = module['title']
-# module_list.update(json.load(open('sem1moduleList.json', 'r')))
-# module_list.update(json.load(open('sem2moduleList.json', 'r')))
+def init_module_list():
+    with open('moduleList.json', 'r') as f:
+        modules = json.load(f)
+        for module in modules:
+            module_list[module['moduleCode']] = module['title']
+    # module_list.update(json.load(open('sem1moduleList.json', 'r')))
+    # module_list.update(json.load(open('sem2moduleList.json', 'r')))
+init_module_list()
 
 wikiwiki = wikipediaapi.Wikipedia('en')
 
