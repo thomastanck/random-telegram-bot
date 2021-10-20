@@ -425,8 +425,11 @@ def arxivlookup(bot, update):
         result += f'*{arxivid}: {title}*\n{summary}\n\n'
     update.message.reply_markdown(result)
 
-with open('./date.pik', 'rb') as f:
-    date_of_last_offence = pickle.load(f)
+
+def init_date_pik():
+    with open('./date.pik', 'rb') as f:
+        date_of_last_offence = pickle.load(f)
+init_date_pik()
 
 def resetcounter(bot, update):
     global date_of_last_offence
