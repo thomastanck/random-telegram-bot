@@ -16,8 +16,6 @@ from summa.summarizer import summarize
 import datetime
 import pickle
 
-logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s', level=logging.DEBUG)
-
 photos = {
         "metacircular": 'AgADBQADV6gxGyA9KVdv8KmmmPgtsjRW2zIABBah2Y1WNNV7JzkBAAEC',
         "pseudocode": 'AgADBQADI6kxGzYomFdFvXL3F25hpb-g1jIABIOzLQpJhZIG9j0EAAEC',
