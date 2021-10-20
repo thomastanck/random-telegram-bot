@@ -425,24 +425,38 @@ def arxivlookup(bot, update):
         result += f'*{arxivid}: {title}*\n{summary}\n\n'
     update.message.reply_markdown(result)
 
+class LastOffence:
+    def __init__(self):
+        self.read()
+        self.write()
 
-def init_date_pik():
-    with open('./date.pik', 'rb') as f:
-        date_of_last_offence = pickle.load(f)
-init_date_pik()
+    def read(self):
+        try:
+            with open('./date.pik', 'rb') as f:
+                self.date = pickle.load(f)
+        except:
+            self.reset()
+
+    def write(self):
+        with open('./date.pik', 'wb') as f:
+            pickle.dump(self.date, f)
+
+    def reset(self):
+        self.date = datetime.date.today()
+        self.write()
+
+    def get_delta(self):
+        current_date = datetime.date.today()
+        return current_date - self.date
+last_offence = LastOffence()
 
 def resetcounter(bot, update):
-    global date_of_last_offence
-    current_date = datetime.date.today()
-    delta = current_date - date_of_last_offence
-    date_of_last_offence = current_date
-    with open('./date.pik', 'wb') as f:
-        pickle.dump(date_of_last_offence, f)
+    delta = last_offence.get_delta()
+    last_offence.reset()
     update.message.reply_markdown("Counter reset. " + str(delta.days) + " since last offence")
 
 def getdays(bot, update):
-    current_date = datetime.date.today()
-    delta = current_date - date_of_last_offence
+    delta = last_offence.get_delta()
     update.message.reply_markdown(str(delta.days) + " since last offence")
 
 def main():
