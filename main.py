@@ -487,6 +487,9 @@ What are we opening up you ask? That is also very clearly laid out. We have done
 
 {'🤡' * mmtf_clowns.num_clowns}''')
 
+    mmtf_clowns.num_clowns += 1
+    mmtf_clowns.write()
+
 def main():
     updater = Updater('781479203:AAE7TvXGvd16Ro2XgCtwi3i3vkAoqmPkx3Y')
     updater.dispatcher.add_handler(CommandHandler('random', randomcmd))
